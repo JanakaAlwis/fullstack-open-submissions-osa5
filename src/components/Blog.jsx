@@ -1,51 +1,40 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const Blog = ({ blog, user, updateLikes, deleteBlog }) => {
-  const [visible, setVisible] = useState(false)
+const Blog = ({ blog, onLike }) => {
+  const [detailsVisible, setDetailsVisible] = useState(false)
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
-
-  const handleLike = () => {
-    updateLikes(blog.id, {
-      ...blog,
-      user: blog.user.id,
-      likes: blog.likes + 1
-    })
-  }
-
-  const handleDelete = () => {
-    deleteBlog(blog.id)
-  }
+  const toggleDetails = () => setDetailsVisible(!detailsVisible)
 
   return (
-    <div style={blogStyle} className="blog">
-      <div>
-        {blog.title} {blog.author} <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
+    <div className="blog">
+      <div className="blog-summary">
+        {blog.title} {blog.author}
+        <button onClick={toggleDetails} className="toggle-details-btn">
+          {detailsVisible ? 'hide' : 'view'}
+        </button>
       </div>
-      {visible && (
-        <div>
-          <div>{blog.url}</div>
-          <div>
-            likes {blog.likes} <button onClick={handleLike}>like</button>
+      {detailsVisible && (
+        <div className="blog-details">
+          <div className="blog-url">{blog.url}</div>
+          <div className="blog-likes">
+            likes {blog.likes}
+            <button onClick={onLike} className="like-btn">like</button>
           </div>
-          <div>{blog.user.name}</div>
-          {user.username === blog.user.username && (
-            <button onClick={handleDelete}>remove</button>
-          )}
         </div>
       )}
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired
+  }).isRequired,
+  onLike: PropTypes.func.isRequired
 }
 
 export default Blog
